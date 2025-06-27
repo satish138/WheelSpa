@@ -1,0 +1,63 @@
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.admin-sidebar {
+  width: 220px;
+  background-color: #212529;
+  color: #fff;
+  min-height: 100vh;
+  padding-top: 1rem;
+  position: sticky;
+  top: 0;
+}
+
+.sidebar-header {
+  font-size: 1.3rem;
+  background-color: #343a40;
+  border-bottom: 1px solid #444;
+  text-align: center;
+}
+
+.sidebar-link {
+  color: #ccc;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.sidebar-link:hover {
+  background-color: #495057;
+  color: #fff;
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  background-color: #495057;
+  color: #fff;
+  font-weight: 500;
+}
+
+.admin-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-topbar {
+  height: 60px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  display: flex;
+  align-items: center;
+  z-index: 10;
+}
+
+.admin-content {
+  background-color: #f1f3f5;
+  flex-grow: 1;
+  overflow-y: auto;
+}
