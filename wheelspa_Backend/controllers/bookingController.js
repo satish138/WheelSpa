@@ -117,3 +117,54 @@ exports.getUserBookings = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+exports.cancelBooking = async (req, res) => {
+  try {
+    const booking = await Booking.findByIdAndDelete(req.params.bookingId);
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+
+    // ✅ Send email to user and admin
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.ADMIN_EMAIL,
+        pass: process.env.ADMIN_PASS,
+      },
+    });
+
+    // Email to customer
+    const userMail = {
+      from: process.env.ADMIN_EMAIL,
+      to: booking.email,
+      subject: 'WheelSpa Booking Cancelled',
+      html: `
+        <h3>Hello ${booking.name},</h3>
+        <p>Your booking for <strong>${booking.service}</strong> on <strong>${booking.date}</strong> at <strong>${booking.time}</strong> has been successfully cancelled.</p>
+        <p>We're sorry to see you go. Hope to serve you again soon!</p>
+      `,
+    };
+
+    // Email to admin
+    const adminMail = {
+      from: process.env.ADMIN_EMAIL,
+      to: process.env.ADMIN_EMAIL,
+      subject: '🔔 Booking Cancelled',
+      html: `
+        <h4>Booking Cancelled</h4>
+        <p><strong>${booking.name}</strong> cancelled their booking for <strong>${booking.service}</strong> on <strong>${booking.date}</strong> at <strong>${booking.time}</strong>.</p>
+        <p>Phone: ${booking.phone} <br/> Email: ${booking.email}</p>
+      `,
+    };
+
+    // Send both emails
+    await transporter.sendMail(userMail);
+    await transporter.sendMail(adminMail);
+
+    res.status(200).json({ message: 'Booking cancelled and emails sent' });
+  } catch (error) {
+    console.error('Cancellation error:', error);
+    res.status(500).json({ message: 'Error cancelling booking' });
+  }
+};
